@@ -12,6 +12,7 @@ def build_video(vid, out_file, file_type=1):
     print('Author:', yt.author)
     print('Number of views:', yt.views)
     print('Length of video:', yt.length, 'sec')
+    # If it is marked as a 1 this is going to make a video with audio file
     if file_type == 1:
         try:
             yt.streams.filter(res='1080p', progressive=False).first().download(filename='video.mp4')
@@ -26,14 +27,19 @@ def build_video(vid, out_file, file_type=1):
             clean_up(vid, title)
 
         except:
+            # This will trigger if the video you are trying to download does not have at least 1080p, and it will
+            # default the highest resolution or 720p
             yd = yt.streams.get_highest_resolution()
             yd.download('/home/andy/Desktop/downloaded_vid')
 
     elif file_type == 2:
+        # This will make it so you will just get the audio file, no video
         yt.streams.filter(abr='160kbps', progressive=False).first().download(filename='out.mp4')
         clean_up(vid, title)
 
 
+# This is going to delete the temp video files that get created from the audio and video streams ad then also move the
+# combined video file into a new folder for you with a new name
 def clean_up(vid, title):
     new_title = title.replace(" ", "_")
     print(new_title)
